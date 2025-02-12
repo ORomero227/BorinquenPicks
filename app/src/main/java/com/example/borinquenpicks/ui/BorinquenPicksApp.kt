@@ -1,10 +1,9 @@
 package com.example.borinquenpicks.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -18,8 +17,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.borinquenpicks.R
-import com.example.borinquenpicks.data.DataSource
+import com.example.borinquenpicks.data.Categories
 import com.example.borinquenpicks.model.BorinquenPicksViewModel
+import com.example.borinquenpicks.ui.navigation.Screen
 import com.example.borinquenpicks.ui.screens.CategoriesScreen
 import com.example.borinquenpicks.ui.screens.RecommendationsScreen
 import com.example.borinquenpicks.ui.theme.BorinquenPicksTheme
@@ -33,25 +33,52 @@ fun BorinquenPicksApp(
 
     val uiState by viewModel.uiState.collectAsState()
 
+    BackHandler(enabled = true) {
+        viewModel.navigateBack()
+    }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(stringResource(uiState.currentScreen)) },
+                title = {
+                    when(val screen = uiState.currentScreen) {
+                        is Screen.Categories -> Text(stringResource(R.string.app_name))
+                        is Screen.Recommendations -> Text(stringResource(screen.category.title))
+                    }
+                },
+                navigationIcon = {
+
+                },
                 modifier = Modifier.fillMaxWidth()
             )
         },
     ) { innerPadding ->
-        if(uiState.isShowingCategories) {
-            CategoriesScreen(
-                categories = DataSource.categories,
-                switchToRecommendations = { viewModel.switchToRecommendations() },
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(10.dp)
-            )
-        } else if(uiState.isShowingRecommendations) {
-            RecommendationsScreen()
+
+        when (val screen = uiState.currentScreen) {
+            is Screen.Categories -> {
+                CategoriesScreen(
+                    categories = Categories.categories,
+                    switchToRecommendations = { category ->
+                        viewModel.navigateTo(
+                            Screen.Recommendations(category)
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(10.dp)
+                )
+            }
+            is Screen.Recommendations -> {
+                RecommendationsScreen(
+                    categoryRecommendations = screen.category.recommendations,
+                    categoryImage = screen.category.image,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(horizontal = 16.dp),
+                    )
+            }
         }
     }
 }

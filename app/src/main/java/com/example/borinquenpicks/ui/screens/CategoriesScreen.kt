@@ -31,14 +31,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.borinquenpicks.data.DataSource
+import com.example.borinquenpicks.data.Categories
 import com.example.borinquenpicks.model.Category
 import com.example.borinquenpicks.ui.theme.BorinquenPicksTheme
 
 @Composable
 fun CategoriesScreen(
     categories: List<Category>,
-    switchToRecommendations: () -> Unit,
+    switchToRecommendations: (Category) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -60,7 +60,7 @@ fun CategoriesScreen(
 @Composable
 fun CategoryCard(
     category: Category,
-    switchToRecommendations: () -> Unit,
+    switchToRecommendations: (Category) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -77,7 +77,7 @@ fun CategoryCard(
         modifier = modifier
             .clickable {
                 isPressed = !isPressed
-                switchToRecommendations()
+                switchToRecommendations(category)
             }
             .scale(scale),
     ) {
@@ -111,6 +111,6 @@ fun CategoryCard(
 @Composable
 fun CategoriesScreenPreview() {
     BorinquenPicksTheme {
-        CategoriesScreen(categories = DataSource.categories, {})
+        CategoriesScreen(categories = Categories.categories, {})
     }
 }

@@ -1,10 +1,8 @@
 package com.example.borinquenpicks.model
 
-import androidx.annotation.StringRes
-import com.example.borinquenpicks.R
+import com.example.borinquenpicks.ui.navigation.Screen
 
 data class BorinquenPicksUiState(
-    @StringRes val currentScreen: Int = R.string.app_name,
-    val isShowingCategories: Boolean = true,
-    val isShowingRecommendations: Boolean = false,
+    val currentScreen: Screen = Screen.Categories,
+    val listOfRecommendations: List<Recommendation> = listOf(),
 )
