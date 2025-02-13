@@ -4,8 +4,12 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,8 +29,31 @@ import com.example.borinquenpicks.ui.screens.RecommendationDetailScreen
 import com.example.borinquenpicks.ui.screens.RecommendationsScreen
 import com.example.borinquenpicks.ui.theme.BorinquenPicksTheme
 
-
 @OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BorinquenPicksAppBar(
+    title: String,
+    canNavigateBack: Boolean,
+    navigateUp: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    CenterAlignedTopAppBar(
+        title = { Text(title) },
+        navigationIcon = {
+            if(canNavigateBack) {
+                IconButton(onClick = navigateUp) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.back_button)
+                    )
+                }
+            }
+        },
+        modifier = modifier
+    )
+}
+
+
 @Composable
 fun BorinquenPicksApp(
     viewModel: BorinquenPicksViewModel = viewModel()
@@ -40,20 +67,23 @@ fun BorinquenPicksApp(
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    when(val screen = uiState.currentScreen) {
-                        is Screen.Categories -> Text(stringResource(R.string.app_name))
-                        is Screen.Recommendations -> Text(stringResource(screen.category.title))
-                        is Screen.RecommendationDetail -> {}
-                    }
-                },
-                navigationIcon = {
-
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
+            when(val screen = uiState.currentScreen) {
+                is Screen.Categories -> BorinquenPicksAppBar(
+                    title = stringResource(R.string.app_name),
+                    canNavigateBack = false,
+                    navigateUp = {},
+                    modifier = Modifier.fillMaxWidth()
+                )
+                is Screen.Recommendations -> BorinquenPicksAppBar(
+                    title = stringResource(screen.category.title),
+                    canNavigateBack = true,
+                    navigateUp = { viewModel.navigateBack() }
+                )
+                is Screen.RecommendationDetail -> {}
+            }
         },
+
+
     ) { innerPadding ->
 
         when (val screen = uiState.currentScreen) {
@@ -91,9 +121,7 @@ fun BorinquenPicksApp(
                     navigateBack = {
                         viewModel.navigateBack()
                     },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
+                    modifier = Modifier.fillMaxSize().padding(innerPadding)
                 )
             }
         }
