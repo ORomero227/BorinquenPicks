@@ -1,6 +1,5 @@
 package com.example.borinquenpicks.ui.screens
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,7 +32,7 @@ import com.example.borinquenpicks.ui.theme.BorinquenPicksTheme
 @Composable
 fun RecommendationsScreen(
     categoryRecommendations: List<Recommendation>,
-    @DrawableRes categoryImage: Int,
+    categoryImage: Int,
     modifier: Modifier = Modifier
 ) {
 
@@ -107,16 +106,6 @@ fun RecommendationItem(
     }
 }
 
-
-//@Preview
-//@Composable
-//fun RecommendationItemPreview() {
-//    BorinquenPicksTheme {
-//        RecommendationItem(
-//            recommendation = Recommendations.restaurants[0]
-//        )
-//    }
-//}
 
 @Preview(showBackground = true)
 @Composable
