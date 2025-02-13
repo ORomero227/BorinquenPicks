@@ -21,6 +21,7 @@ import com.example.borinquenpicks.data.Categories
 import com.example.borinquenpicks.model.BorinquenPicksViewModel
 import com.example.borinquenpicks.ui.navigation.Screen
 import com.example.borinquenpicks.ui.screens.CategoriesScreen
+import com.example.borinquenpicks.ui.screens.RecommendationDetailScreen
 import com.example.borinquenpicks.ui.screens.RecommendationsScreen
 import com.example.borinquenpicks.ui.theme.BorinquenPicksTheme
 
@@ -44,6 +45,7 @@ fun BorinquenPicksApp(
                     when(val screen = uiState.currentScreen) {
                         is Screen.Categories -> Text(stringResource(R.string.app_name))
                         is Screen.Recommendations -> Text(stringResource(screen.category.title))
+                        is Screen.RecommendationDetail -> {}
                     }
                 },
                 navigationIcon = {
@@ -59,9 +61,8 @@ fun BorinquenPicksApp(
                 CategoriesScreen(
                     categories = Categories.categories,
                     switchToRecommendations = { category ->
-                        viewModel.navigateTo(
-                            Screen.Recommendations(category)
-                        )
+                        viewModel.setSelectedCategory(category)
+                        viewModel.navigateTo(Screen.Recommendations(category))
                     },
                     modifier = Modifier
                         .fillMaxSize()
@@ -73,11 +74,27 @@ fun BorinquenPicksApp(
                 RecommendationsScreen(
                     categoryRecommendations = screen.category.recommendations,
                     categoryImage = screen.category.image,
+                    showRecommendationDetail = { recommendation ->
+                            viewModel.navigateTo(
+                                Screen.RecommendationDetail(recommendation)
+                            )
+                    },
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
                         .padding(horizontal = 16.dp),
                     )
+            }
+            is Screen.RecommendationDetail -> {
+                RecommendationDetailScreen(
+                    recommendation = screen.recommendation,
+                    navigateBack = {
+                        viewModel.navigateBack()
+                    },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                )
             }
         }
     }

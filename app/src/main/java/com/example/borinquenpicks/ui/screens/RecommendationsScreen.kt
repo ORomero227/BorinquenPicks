@@ -1,6 +1,7 @@
 package com.example.borinquenpicks.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -33,6 +34,7 @@ import com.example.borinquenpicks.ui.theme.BorinquenPicksTheme
 fun RecommendationsScreen(
     categoryRecommendations: List<Recommendation>,
     categoryImage: Int,
+    showRecommendationDetail: (Recommendation) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -51,7 +53,11 @@ fun RecommendationsScreen(
             RecommendationItem(
                 recommendation = recommendation,
                 categoryImage = categoryImage,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        showRecommendationDetail(recommendation)
+                    }
             )
         }
     }
@@ -113,7 +119,8 @@ fun RecommendationsScreenPreview() {
     BorinquenPicksTheme {
         RecommendationsScreen(
             categoryImage = R.drawable.ic_launcher_foreground,
-            categoryRecommendations = Recommendations.restaurants
+            categoryRecommendations = Recommendations.restaurants,
+            showRecommendationDetail = {}
         )
     }
 }
