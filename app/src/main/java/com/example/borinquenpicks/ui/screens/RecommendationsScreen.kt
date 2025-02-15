@@ -38,10 +38,6 @@ fun RecommendationsScreen(
     modifier: Modifier = Modifier
 ) {
 
-    val sortedRecommendation = categoryRecommendations.sortedBy {
-        it.name
-    }
-
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = modifier,
@@ -49,7 +45,7 @@ fun RecommendationsScreen(
             vertical = 16.dp
         )
     ) {
-        items(sortedRecommendation) { recommendation ->
+        items(categoryRecommendations) { recommendation ->
             RecommendationItem(
                 recommendation = recommendation,
                 categoryImage = categoryImage,

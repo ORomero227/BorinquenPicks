@@ -105,9 +105,7 @@ fun BorinquenPicksApp(
                     categoryRecommendations = screen.category.recommendations,
                     categoryImage = screen.category.image,
                     showRecommendationDetail = { recommendation ->
-                            viewModel.navigateTo(
-                                Screen.RecommendationDetail(recommendation)
-                            )
+                            viewModel.navigateToRecommendationDetail(recommendation)
                     },
                     modifier = Modifier
                         .fillMaxSize()
@@ -117,7 +115,7 @@ fun BorinquenPicksApp(
             }
             is Screen.RecommendationDetail -> {
                 RecommendationDetailScreen(
-                    recommendation = screen.recommendation,
+                    recommendation = uiState.currentRecommendation!!,
                     navigateBack = {
                         viewModel.navigateBack()
                     },
