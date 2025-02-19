@@ -1,63 +1,47 @@
 package com.example.borinquenpicks.model
 
-import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.borinquenpicks.data.FirebaseCategoriesRepository
 import com.example.borinquenpicks.ui.navigation.Screen
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class BorinquenPicksViewModel : ViewModel() {
+class BorinquenPicksViewModel(
+    private val categoriesRepository: FirebaseCategoriesRepository = FirebaseCategoriesRepository()
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BorinquenPicksUiState())
     val uiState: StateFlow<BorinquenPicksUiState> = _uiState.asStateFlow()
 
-    private val storage = Firebase.storage
+    init {
+        loadCategories()
+    }
 
-    private fun loadRecommendationImage(recommendation: Recommendation) {
-
-        _uiState.update { currentState ->
-            currentState.copy(
-                currentRecommendation = recommendation.copy(isLoading = true)
-            )
-        }
-
-        val recommendationCategory = recommendation.categoryName
-        val recommendationId = recommendation.id
-
-        val imagePath = "$recommendationCategory/image$recommendationId.webp"
-        val imageRef = storage.reference.child(imagePath)
+    private fun loadCategories() {
 
         viewModelScope.launch {
-            // Success
-            imageRef.downloadUrl
-                .addOnSuccessListener { uri: Uri ->
-                    _uiState.update { currentState ->
-                        currentState.copy(
-                            currentRecommendation = currentState.currentRecommendation?.copy(
-                                image = uri.toString(),
-                                isLoading = false,
-                                error = null
-                            )
-                        )
-                    }
+            try {
+                val categories = categoriesRepository.getCategories()
+                Log.d("My Viewmodel", "Received categories: ${categories.size}")
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        categories = categories
+                    )
                 }
-                // Error
-                .addOnFailureListener { exception ->
-                    _uiState.update { currentState ->
-                        currentState.copy(
-                            currentRecommendation = currentState.currentRecommendation?.copy(
-                                isLoading = false,
-                                error = exception.message
-                            )
-                        )
-                    }
+            } catch (e: Exception){
+                Log.e("My Viewmodel", "Error receiving categories", e)
+            } finally {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        categoriesLoading = false
+                    )
                 }
+            }
         }
     }
 
@@ -69,7 +53,6 @@ class BorinquenPicksViewModel : ViewModel() {
             )
         }
     }
-
 
     fun navigateTo(screen: Screen) {
         _uiState.update { currentState ->
@@ -86,7 +69,7 @@ class BorinquenPicksViewModel : ViewModel() {
                 currentRecommendation = recommendation
             )
         }
-        loadRecommendationImage(recommendation)
+//        loadRecommendationImage(recommendation)
     }
 
     fun navigateBack() {

@@ -21,7 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.borinquenpicks.R
-import com.example.borinquenpicks.data.Categories
 import com.example.borinquenpicks.model.BorinquenPicksViewModel
 import com.example.borinquenpicks.ui.navigation.Screen
 import com.example.borinquenpicks.ui.screens.CategoriesScreen
@@ -75,7 +74,7 @@ fun BorinquenPicksApp(
                     modifier = Modifier.fillMaxWidth()
                 )
                 is Screen.Recommendations -> BorinquenPicksAppBar(
-                    title = stringResource(screen.category.title),
+                    title = screen.category.title,
                     canNavigateBack = true,
                     navigateUp = { viewModel.navigateBack() }
                 )
@@ -89,7 +88,8 @@ fun BorinquenPicksApp(
         when (val screen = uiState.currentScreen) {
             is Screen.Categories -> {
                 CategoriesScreen(
-                    categories = Categories.categories,
+                    categories = uiState.categories,
+                    categoriesLoading = uiState.categoriesLoading,
                     switchToRecommendations = { category ->
                         viewModel.setSelectedCategory(category)
                         viewModel.navigateTo(Screen.Recommendations(category))

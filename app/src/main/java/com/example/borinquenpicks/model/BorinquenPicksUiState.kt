@@ -4,7 +4,8 @@ import com.example.borinquenpicks.ui.navigation.Screen
 
 data class BorinquenPicksUiState(
     val currentScreen: Screen = Screen.Categories,
-    val listOfRecommendations: List<Recommendation> = listOf(),
+    val categories: List<Category> = listOf(),
     val selectedCategory: Category = Category.Default,
-    val currentRecommendation: Recommendation? = null
+    val currentRecommendation: Recommendation? = null,
+    val categoriesLoading: Boolean = true,
 )

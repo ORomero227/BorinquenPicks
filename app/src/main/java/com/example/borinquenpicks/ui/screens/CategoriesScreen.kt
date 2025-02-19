@@ -1,7 +1,6 @@
 package com.example.borinquenpicks.ui.screens
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,33 +26,41 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.borinquenpicks.data.Categories
+import coil3.compose.AsyncImage
 import com.example.borinquenpicks.model.Category
 import com.example.borinquenpicks.ui.theme.BorinquenPicksTheme
 
 @Composable
 fun CategoriesScreen(
     categories: List<Category>,
+    categoriesLoading: Boolean,
     switchToRecommendations: (Category) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        items(categories) { category ->
-            CategoryCard(
-                category = category,
-                switchToRecommendations = switchToRecommendations,
-                modifier = Modifier.aspectRatio(1f)
-            )
+    if (categoriesLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    } else {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            items(categories) { category ->
+                CategoryCard(
+                    category = category,
+                    switchToRecommendations = switchToRecommendations,
+                    modifier = Modifier.aspectRatio(1f)
+                )
+            }
         }
     }
 }
@@ -67,12 +75,12 @@ fun CategoryCard(
     var isPressed by remember { mutableStateOf(false) }
 
     val scale by animateFloatAsState(
-        targetValue = if(isPressed) 0.95F else 1f
+        targetValue = if (isPressed) 0.95F else 1f
     )
 
     Card(
         elevation = CardDefaults.cardElevation(
-            defaultElevation = if(isPressed) 2.dp else 4.dp
+            defaultElevation = if (isPressed) 2.dp else 4.dp
         ),
         modifier = modifier
             .clickable {
@@ -90,17 +98,19 @@ fun CategoryCard(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize()
             ) {
-                Image(
-                    painter = painterResource(category.image),
-                    contentDescription = stringResource(category.title),
+                AsyncImage(
+                    model = category.image,
+                    contentDescription = category.title,
                     modifier = Modifier.size(70.dp)
                 )
                 Text(
-                    text = stringResource(category.title),
+                    text = category.title,
                     style = typography.bodyLarge,
                     textAlign = TextAlign.Center,
                     maxLines = 2,
-                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp)
                 )
             }
         }
@@ -111,6 +121,6 @@ fun CategoryCard(
 @Composable
 fun CategoriesScreenPreview() {
     BorinquenPicksTheme {
-        CategoriesScreen(categories = Categories.categories, {})
+        CategoriesScreen(categories = emptyList(), false, {})
     }
 }

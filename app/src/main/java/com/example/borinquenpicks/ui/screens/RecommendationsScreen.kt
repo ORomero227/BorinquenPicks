@@ -1,6 +1,5 @@
 package com.example.borinquenpicks.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import com.example.borinquenpicks.R
 import com.example.borinquenpicks.data.Recommendations
 import com.example.borinquenpicks.model.Recommendation
@@ -33,7 +33,7 @@ import com.example.borinquenpicks.ui.theme.BorinquenPicksTheme
 @Composable
 fun RecommendationsScreen(
     categoryRecommendations: List<Recommendation>,
-    categoryImage: Int,
+    categoryImage: String,
     showRecommendationDetail: (Recommendation) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -62,7 +62,7 @@ fun RecommendationsScreen(
 @Composable
 fun RecommendationItem(
     recommendation: Recommendation,
-    categoryImage: Int,
+    categoryImage: String,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -77,12 +77,13 @@ fun RecommendationItem(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(categoryImage),
+            AsyncImage(
+                model = categoryImage,
                 contentDescription = null,
+                error = painterResource(R.drawable.image_not_found),
                 modifier = Modifier
                     .size(65.dp)
-                    .padding(end = 16.dp)
+                    .padding(end = 16.dp),
             )
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
@@ -114,7 +115,7 @@ fun RecommendationItem(
 fun RecommendationsScreenPreview() {
     BorinquenPicksTheme {
         RecommendationsScreen(
-            categoryImage = R.drawable.ic_launcher_foreground,
+            categoryImage = "",
             categoryRecommendations = Recommendations.restaurants,
             showRecommendationDetail = {}
         )
