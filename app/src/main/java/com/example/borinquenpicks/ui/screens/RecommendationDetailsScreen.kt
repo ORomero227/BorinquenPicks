@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.example.borinquenpicks.R
-import com.example.borinquenpicks.data.Recommendations
 import com.example.borinquenpicks.model.Recommendation
 import com.example.borinquenpicks.ui.theme.BorinquenPicksTheme
 
@@ -154,7 +153,7 @@ fun RecommendationDetailsPreview() {
     BorinquenPicksTheme {
         RecommendationDetailScreen(
             modifier = Modifier.fillMaxSize(),
-            recommendation = Recommendations.restaurants[0],
+            recommendation = Recommendation(),
             navigateBack = {}
         )
     }

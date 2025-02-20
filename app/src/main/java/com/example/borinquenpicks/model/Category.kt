@@ -1,8 +1,7 @@
 package com.example.borinquenpicks.model
 
-import com.example.borinquenpicks.R
-
 data class Category (
+    val id: String = "",
     val title: String = "",
     val image: String = "",
     val recommendations: List<Recommendation> = emptyList()
